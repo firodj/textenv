@@ -11,9 +11,9 @@ import (
 var GetEnv = os.Getenv
 var SetEnv = os.Setenv
 
-func GetProjectRootPath() (path string, err error) {
-	_, filename, _, _ := runtime.Caller(0)
-	path, err = filepath.Abs(filepath.Dir(filename) + "/..")
+func GetScriptPath(skip int) (path string, err error) {
+	_, filename, _, _ := runtime.Caller(skip+1)
+	path, err = filepath.Abs(filepath.Dir(filename))
 	return
 }
 
@@ -61,7 +61,7 @@ func parseContents(b []byte) error {
 }
 
 func LoadTestEnv(textenv string) error {
-	projPath, err := GetProjectRootPath()
+	projPath, err := GetScriptPath(1)
 	if err != nil {
 		return fmt.Errorf("unable to get project root path: %v", err)
 	}
