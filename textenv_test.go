@@ -1,6 +1,27 @@
 package textenv
 
-import "testing"
+import (
+	"path/filepath"
+	"runtime"
+	"testing"
+)
+
+func TestGetScriptPath(t  *testing.T) {
+	_, filename, _, _ := runtime.Caller(0)
+	expected, err := filepath.Abs(filepath.Dir(filename))
+	if err != nil {
+		t.Error(err)
+	}
+
+	actual, err := GetScriptPath(0)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if expected != actual {
+		t.Errorf("unexpected %s with %s", actual, expected)
+	}
+}
 
 func Test_parseLine(t *testing.T) {
 	for _, tt := range []struct {
