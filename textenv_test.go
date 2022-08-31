@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestGetScriptPath(t  *testing.T) {
+func TestGetScriptPath(t *testing.T) {
 	_, filename, _, _ := runtime.Caller(0)
 	expected, err := filepath.Abs(filepath.Dir(filename))
 	if err != nil {
@@ -105,7 +105,7 @@ func (tt parseLineTestCase) Run(t *testing.T) {
 func Test_parseLine(t *testing.T) {
 	for _, tt := range []parseLineTestCase{
 		{
-			testCase {
+			testCase{
 				"when blank",
 				"    ",
 				nil,
@@ -191,7 +191,7 @@ func (tt subReplaceTestCase) Run(t *testing.T) {
 func Test_subReplace(t *testing.T) {
 	for _, tt := range []subReplaceTestCase{
 		{
-			testCase {
+			testCase{
 				"when blank",
 				"",
 				nil,
@@ -204,7 +204,7 @@ func Test_subReplace(t *testing.T) {
 				"when there is",
 				"AKU$(ADALAH)DIA$$(TAPIBUKAN)DAN$(LAGI)",
 				nil,
-				func (k string) string {
+				func(k string) string {
 					switch k {
 					case "ADALAH":
 						return "SESUATU"

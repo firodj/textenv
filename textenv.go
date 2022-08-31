@@ -13,7 +13,7 @@ var GetEnv = os.Getenv
 var SetEnv = os.Setenv
 
 func GetScriptPath(skip int) (path string, err error) {
-	_, filename, _, _ := runtime.Caller(skip+1)
+	_, filename, _, _ := runtime.Caller(skip + 1)
 	path, err = filepath.Abs(filepath.Dir(filename))
 	return
 }
@@ -22,7 +22,7 @@ func subReplace(l string) string {
 	re := regexp.MustCompile(`(^|.)\$\(([A-Za-z0-9_]+)\)`)
 	repl := func(groups []string) string {
 		if groups[1] == "$" {
-			return "$(" +  groups[2] + ")";
+			return "$(" + groups[2] + ")"
 		}
 		return groups[1] + GetEnv(groups[2])
 	}
