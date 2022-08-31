@@ -14,23 +14,36 @@ $ go fmt
 
 # example
 
+File `PROJECT_DIR/test.env`, contents:
+
+```env
+# testing environment
+DBUSER=$(USER)
+DBHOST=localhost
+DBURL=sql://$(DBUSER)@$(DBHOST)/somedb
+```
+
+File `PROJECT_DIR/db/init_test.go`, contents:
+
 ```go
 func init() {
-
-  oldSetenv := textenv.SetEnv
-
+  oriSetenv := textenv.SetEnv
   defer func() {
-		textenv.SetEnv = oldSetenv
-	}()
+    textenv.SetEnv = oriSetenv
+  }()
 
   textenv.SetEnv = func(k string, v string) error {
-		fmt.Printf("env %s=%s\n", k, v)
-		return oldSetenv(k, v)
-	}
+    fmt.Printf("env %s=%s\n", k, v)
+    return oriSetenv(k, v)
+  }
 
-	err := textenv.LoadTestEnv("../test.env")
-	if err != nil {
-		panic(err)
-	}
+  err := textenv.LoadTestEnv("../test.env")
+  if err != nil {
+    if !strings.Contains(err.Error(), "no such file") {
+      panic(err)
+    } else {
+      fmt.Println("skip load test.env")
+    }
+  }
 }
 ```
