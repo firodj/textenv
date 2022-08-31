@@ -18,8 +18,9 @@ File `PROJECT_DIR/test.env`, contents:
 
 ```env
 # testing environment
-DBUSER=$USER
+DBUSER=$(USER)
 DBHOST=localhost
+DBURL=sql://$(DBUSER)@$(DBHOST)/somedb
 ```
 
 File `PROJECT_DIR/db/init_test.go`, contents:

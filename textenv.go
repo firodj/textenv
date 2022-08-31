@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"runtime"
 	"strings"
 )
@@ -15,6 +16,31 @@ func GetScriptPath(skip int) (path string, err error) {
 	_, filename, _, _ := runtime.Caller(skip+1)
 	path, err = filepath.Abs(filepath.Dir(filename))
 	return
+}
+
+func subReplace(l string) string {
+	re := regexp.MustCompile(`(^|.)\$\(([A-Za-z0-9_]+)\)`)
+	repl := func(groups []string) string {
+		if groups[1] == "$" {
+			return "$(" +  groups[2] + ")";
+		}
+		return groups[1] + GetEnv(groups[2])
+	}
+	result := ""
+
+	g0 := 0
+	for _, g := range re.FindAllStringSubmatchIndex(l, -1) {
+		groups := []string{}
+		for i := 0; i < len(g); i += 2 {
+			groups = append(groups, l[g[i]:g[i+1]])
+		}
+
+		result += l[g0:g[0]] + repl(groups)
+		g0 = g[1]
+	}
+	result += l[g0:]
+
+	return result
 }
 
 func parseLine(l string) error {
@@ -34,11 +60,7 @@ func parseLine(l string) error {
 	}
 
 	k := strings.TrimSpace(s[0])
-	v := strings.TrimSpace(s[1])
-
-	if strings.HasPrefix(v, "$") {
-		v = GetEnv(v[1:])
-	}
+	v := subReplace(strings.TrimSpace(s[1]))
 
 	err := SetEnv(k, v)
 	if err != nil {
